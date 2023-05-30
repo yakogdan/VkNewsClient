@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yakogdan.vknewsclient.MainViewModel
+import com.yakogdan.vknewsclient.domain.model.PostComment
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -35,70 +36,82 @@ fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
                 .background(MaterialTheme.colors.background)
         ) {
             val models = viewModel.feedPosts.observeAsState(listOf())
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
-                    top = 16.dp,
-                    start = 8.dp,
-                    end = 8.dp,
-                    bottom = 72.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(models.value, key = { it.id }) { feedPost ->
-                    val dismissState = rememberDismissState()
-                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                        viewModel.removeItem(feedPost)
-                    }
-                    SwipeToDismiss(
-                        modifier = Modifier.animateItemPlacement(),
-                        state = dismissState,
-                        directions = setOf(DismissDirection.EndToStart),
-                        background = {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                                    .background(Color.Red.copy(alpha = 0.5f)),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(16.dp),
-                                    text = "Delete item",
-                                    color = Color.White,
-                                    fontSize = 24.sp
-                                )
-                            }
-                        }) {
-                        PostCard(
-                            feedPost = feedPost,
-                            onLikeClickListener = { statisticItem ->
-                                viewModel.updateCount(
-                                    feedPost = feedPost,
-                                    item = statisticItem
-                                )
-                            },
-                            onShareClickListener = { statisticItem ->
-                                viewModel.updateCount(
-                                    feedPost = feedPost,
-                                    item = statisticItem
-                                )
-                            },
-                            onViewsClickListener = { statisticItem ->
-                                viewModel.updateCount(
-                                    feedPost = feedPost,
-                                    item = statisticItem
-                                )
-                            },
-                            onCommentClickListener = { statisticItem ->
-                                viewModel.updateCount(
-                                    feedPost = feedPost,
-                                    item = statisticItem
-                                )
-                            }
+
+            if (models.value.isNotEmpty()) {
+                val comments = mutableListOf<PostComment>().apply {
+                    repeat(20) {
+                        add(
+                            PostComment(id = it)
                         )
                     }
                 }
+                CommentsScreen(feedPost = models.value[0], comments = comments)
+
             }
+//            LazyColumn(
+//                modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
+//                    top = 16.dp,
+//                    start = 8.dp,
+//                    end = 8.dp,
+//                    bottom = 72.dp
+//                ),
+//                verticalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                items(models.value, key = { it.id }) { feedPost ->
+//                    val dismissState = rememberDismissState()
+//                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+//                        viewModel.removeItem(feedPost)
+//                    }
+//                    SwipeToDismiss(
+//                        modifier = Modifier.animateItemPlacement(),
+//                        state = dismissState,
+//                        directions = setOf(DismissDirection.EndToStart),
+//                        background = {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxSize()
+//                                    .padding(16.dp)
+//                                    .background(Color.Red.copy(alpha = 0.5f)),
+//                                contentAlignment = Alignment.CenterEnd
+//                            ) {
+//                                Text(
+//                                    modifier = Modifier.padding(16.dp),
+//                                    text = "Delete item",
+//                                    color = Color.White,
+//                                    fontSize = 24.sp
+//                                )
+//                            }
+//                        }) {
+//                        PostCard(
+//                            feedPost = feedPost,
+//                            onLikeClickListener = { statisticItem ->
+//                                viewModel.updateCount(
+//                                    feedPost = feedPost,
+//                                    item = statisticItem
+//                                )
+//                            },
+//                            onShareClickListener = { statisticItem ->
+//                                viewModel.updateCount(
+//                                    feedPost = feedPost,
+//                                    item = statisticItem
+//                                )
+//                            },
+//                            onViewsClickListener = { statisticItem ->
+//                                viewModel.updateCount(
+//                                    feedPost = feedPost,
+//                                    item = statisticItem
+//                                )
+//                            },
+//                            onCommentClickListener = { statisticItem ->
+//                                viewModel.updateCount(
+//                                    feedPost = feedPost,
+//                                    item = statisticItem
+//                                )
+//                            }
+//                        )
+//                    }
+//                }
+//            }
         }
     }
 }

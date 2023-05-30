@@ -16,21 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.yakogdan.vknewsclient.MainViewModel
 import com.yakogdan.vknewsclient.navigation.AppNavGraph
-import com.yakogdan.vknewsclient.navigation.Screen
+import com.yakogdan.vknewsclient.navigation.rememberNavigationState
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
-
-    val navHostController = rememberNavController()
+    val navigationState = rememberNavigationState()
 
     Scaffold(
         bottomBar = {
             BottomNavigation {
 
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+                val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
 
                 val items = listOf(
@@ -43,13 +41,7 @@ fun MainScreen(viewModel: MainViewModel) {
                     BottomNavigationItem(
                         selected = currentRoute == item.screen.route,
                         onClick = {
-                            navHostController.navigate(item.screen.route) {
-                                popUpTo(Screen.NewsFeed.route) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navigationState.navigateTo(item.screen.route)
                         },
                         icon = {
                             Icon(item.icon, contentDescription = null)
@@ -66,7 +58,7 @@ fun MainScreen(viewModel: MainViewModel) {
     ) { paddingValues ->
 
         AppNavGraph(
-            navHostController = navHostController,
+            navHostController = navigationState.navHostController,
             homeScreenContent = {
                 HomeScreen(
                     viewModel = viewModel,
