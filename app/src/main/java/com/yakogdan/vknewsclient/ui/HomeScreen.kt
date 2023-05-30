@@ -1,5 +1,6 @@
 package com.yakogdan.vknewsclient.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yakogdan.vknewsclient.MainViewModel
-import com.yakogdan.vknewsclient.domain.model.PostComment
+import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
     VkNewsClientTheme {
@@ -35,83 +35,87 @@ fun HomeScreen(viewModel: MainViewModel, paddingValues: PaddingValues) {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            val models = viewModel.feedPosts.observeAsState(listOf())
+            val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
 
-            if (models.value.isNotEmpty()) {
-                val comments = mutableListOf<PostComment>().apply {
-                    repeat(20) {
-                        add(
-                            PostComment(id = it)
-                        )
+            when (val currentState = screenState.value) {
+
+                is HomeScreenState.Posts -> {
+                    FeedPosts(
+                        posts = currentState.posts,
+                        viewModel = viewModel,
+                        paddingValues = paddingValues
+                    )
+                }
+
+                is HomeScreenState.Comments -> {
+                    CommentsScreen(
+                        feedPost = currentState.feedPost,
+                        comments = currentState.comments,
+                        onBackPressed = {
+                            viewModel.closeComments()
+                        }
+                    )
+                    BackHandler {
+                        viewModel.closeComments()
                     }
                 }
-                CommentsScreen(feedPost = models.value[0], comments = comments)
 
+                is HomeScreenState.Initial -> {}
             }
-//            LazyColumn(
-//                modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
-//                    top = 16.dp,
-//                    start = 8.dp,
-//                    end = 8.dp,
-//                    bottom = 72.dp
-//                ),
-//                verticalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                items(models.value, key = { it.id }) { feedPost ->
-//                    val dismissState = rememberDismissState()
-//                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-//                        viewModel.removeItem(feedPost)
-//                    }
-//                    SwipeToDismiss(
-//                        modifier = Modifier.animateItemPlacement(),
-//                        state = dismissState,
-//                        directions = setOf(DismissDirection.EndToStart),
-//                        background = {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .padding(16.dp)
-//                                    .background(Color.Red.copy(alpha = 0.5f)),
-//                                contentAlignment = Alignment.CenterEnd
-//                            ) {
-//                                Text(
-//                                    modifier = Modifier.padding(16.dp),
-//                                    text = "Delete item",
-//                                    color = Color.White,
-//                                    fontSize = 24.sp
-//                                )
-//                            }
-//                        }) {
-//                        PostCard(
-//                            feedPost = feedPost,
-//                            onLikeClickListener = { statisticItem ->
-//                                viewModel.updateCount(
-//                                    feedPost = feedPost,
-//                                    item = statisticItem
-//                                )
-//                            },
-//                            onShareClickListener = { statisticItem ->
-//                                viewModel.updateCount(
-//                                    feedPost = feedPost,
-//                                    item = statisticItem
-//                                )
-//                            },
-//                            onViewsClickListener = { statisticItem ->
-//                                viewModel.updateCount(
-//                                    feedPost = feedPost,
-//                                    item = statisticItem
-//                                )
-//                            },
-//                            onCommentClickListener = { statisticItem ->
-//                                viewModel.updateCount(
-//                                    feedPost = feedPost,
-//                                    item = statisticItem
-//                                )
-//                            }
-//                        )
-//                    }
-//                }
-//            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedPosts(
+    posts: List<FeedPost>, viewModel: MainViewModel, paddingValues: PaddingValues
+) {
+    LazyColumn(
+        modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
+            top = 16.dp, start = 8.dp, end = 8.dp, bottom = 72.dp
+        ), verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(posts, key = { it.id }) { feedPost ->
+            val dismissState = rememberDismissState()
+            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                viewModel.removeItem(feedPost)
+            }
+            SwipeToDismiss(modifier = Modifier.animateItemPlacement(),
+                state = dismissState,
+                directions = setOf(DismissDirection.EndToStart),
+                background = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                            .background(Color.Red.copy(alpha = 0.5f)),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "Delete item",
+                            color = Color.White,
+                            fontSize = 24.sp
+                        )
+                    }
+                }) {
+                PostCard(feedPost = feedPost, onLikeClickListener = { statisticItem ->
+                    viewModel.updateCount(
+                        feedPost = feedPost, item = statisticItem
+                    )
+                }, onShareClickListener = { statisticItem ->
+                    viewModel.updateCount(
+                        feedPost = feedPost, item = statisticItem
+                    )
+                }, onViewsClickListener = { statisticItem ->
+                    viewModel.updateCount(
+                        feedPost = feedPost, item = statisticItem
+                    )
+                }, onCommentClickListener = {
+                    viewModel.showComments(feedPost)
+                })
+            }
         }
     }
 }

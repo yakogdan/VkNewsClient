@@ -33,13 +33,13 @@ import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable
 fun CommentsScreen(
-    feedPost: FeedPost, comments: List<PostComment>
+    feedPost: FeedPost, comments: List<PostComment>, onBackPressed: () -> Unit
 ) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text = "Comments for FeedPost id: ${feedPost.id}")
         }, navigationIcon = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = { onBackPressed() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack, contentDescription = null
                 )
