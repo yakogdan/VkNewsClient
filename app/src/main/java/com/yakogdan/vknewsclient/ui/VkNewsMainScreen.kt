@@ -8,10 +8,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -19,17 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.navigation.navgraph.AppNavGraph
 import com.yakogdan.vknewsclient.navigation.rememberNavigationState
 
 @Composable
 fun MainScreen() {
     val navigationState = rememberNavigationState()
-
-    val commentsToPost: MutableState<FeedPost?> = remember {
-        mutableStateOf(null)
-    }
 
     Scaffold(bottomBar = {
         BottomNavigation {
@@ -70,15 +63,14 @@ fun MainScreen() {
                 HomeScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
-                        commentsToPost.value = it
-                        navigationState.navigateToComments()
+                        navigationState.navigateToComments(it)
                     }
                 )
             },
-            commentsScreenContent = {
+            commentsScreenContent = { feedPost ->
                 CommentsScreen(
-                    feedPost = commentsToPost.value!!,
-                    onBackPressed = { navigationState.navHostController.popBackStack() }
+                    onBackPressed = { navigationState.navHostController.popBackStack() },
+                    feedPost = feedPost
                 )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
