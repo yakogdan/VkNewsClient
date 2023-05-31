@@ -19,7 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.navigation.AppNavGraph
+import com.yakogdan.vknewsclient.navigation.Screen
+import com.yakogdan.vknewsclient.navigation.navgraph.AppNavGraph
 import com.yakogdan.vknewsclient.navigation.rememberNavigationState
 
 @Composable
@@ -61,26 +62,28 @@ fun MainScreen() {
         }
     }) { paddingValues ->
 
-        AppNavGraph(navHostController = navigationState.navHostController,
-            homeScreenContent = {
-                if (commentsToPost.value == null) {
-                    HomeScreen(
-                        paddingValues = paddingValues,
-                        onCommentClickListener = {
-                            commentsToPost.value = it
-                        }
-                    )
-                } else {
-                    CommentsScreen(
-                        feedPost = commentsToPost.value!!,
-                        onBackPressed = { commentsToPost.value = null }
-                    )
-                }
+        AppNavGraph(
+            navHostController = navigationState.navHostController,
+            newsFeedScreenContent = {
+                HomeScreen(
+                    paddingValues = paddingValues,
+                    onCommentClickListener = {
+                        commentsToPost.value = it
+                        navigationState.navigateTo(Screen.Comments.route)
+                    }
+                )
+            },
+            commentsScreenContent = {
+                CommentsScreen(
+                    feedPost = commentsToPost.value!!,
+                    onBackPressed = { commentsToPost.value = null }
+                )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
             profileScreenContent = {
                 TextCounter(name = "Profile")
-            })
+            }
+        )
     }
 }
 
