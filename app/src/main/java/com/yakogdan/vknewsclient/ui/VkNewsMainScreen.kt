@@ -17,9 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.navigation.Screen
 import com.yakogdan.vknewsclient.navigation.navgraph.AppNavGraph
 import com.yakogdan.vknewsclient.navigation.rememberNavigationState
 
@@ -33,21 +33,23 @@ fun MainScreen() {
 
     Scaffold(bottomBar = {
         BottomNavigation {
-
             val navBackStackEntry by
             navigationState.navHostController.currentBackStackEntryAsState()
-
-            val currentRoute = navBackStackEntry?.destination?.route
 
             val items = listOf(
                 NavigationItem.Home, NavigationItem.Favourite, NavigationItem.Profile
             )
 
             items.forEach { item ->
+                val selected = navBackStackEntry?.destination?.hierarchy?.any {
+                    it.route == item.screen.route
+                } ?: false
                 BottomNavigationItem(
-                    selected = currentRoute == item.screen.route,
+                    selected = selected,
                     onClick = {
-                        navigationState.navigateTo(item.screen.route)
+                        if (!selected) {
+                            navigationState.navigateTo(item.screen.route)
+                        }
                     },
                     icon = {
                         Icon(item.icon, contentDescription = null)
@@ -69,14 +71,14 @@ fun MainScreen() {
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         commentsToPost.value = it
-                        navigationState.navigateTo(Screen.Comments.route)
+                        navigationState.navigateToComments()
                     }
                 )
             },
             commentsScreenContent = {
                 CommentsScreen(
                     feedPost = commentsToPost.value!!,
-                    onBackPressed = { commentsToPost.value = null }
+                    onBackPressed = { navigationState.navHostController.popBackStack() }
                 )
             },
             favouriteScreenContent = { TextCounter(name = "Favourite") },
