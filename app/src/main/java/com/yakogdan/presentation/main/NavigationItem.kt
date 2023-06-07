@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.ui
+package com.yakogdan.presentation.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite

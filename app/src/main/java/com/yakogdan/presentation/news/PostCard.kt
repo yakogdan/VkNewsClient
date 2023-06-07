@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.ui
+package com.yakogdan.presentation.news
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

@@ -1,11 +1,10 @@
-package com.yakogdan.vknewsclient.viewmodels
+package com.yakogdan.presentation.comment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.domain.model.PostComment
-import com.yakogdan.vknewsclient.ui.screenstates.CommentsScreenState
 
 class CommentsViewModel(feedPost: FeedPost) : ViewModel() {
 

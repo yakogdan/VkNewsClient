@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.ui
+package com.yakogdan.presentation.comment
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -30,10 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.domain.model.PostComment
-import com.yakogdan.vknewsclient.ui.screenstates.CommentsScreenState
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
-import com.yakogdan.vknewsclient.viewmodels.CommentsViewModel
-import com.yakogdan.vknewsclient.viewmodels.factory.CommentsViewModelFactory
 
 @Composable
 fun CommentsScreen(

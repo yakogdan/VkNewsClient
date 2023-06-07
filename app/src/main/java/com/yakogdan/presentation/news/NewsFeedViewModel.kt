@@ -1,11 +1,10 @@
-package com.yakogdan.vknewsclient.viewmodels
+package com.yakogdan.presentation.news
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.domain.model.StatisticItem
-import com.yakogdan.vknewsclient.ui.screenstates.NewsFeedScreenState
 
 class NewsFeedViewModel : ViewModel() {
 

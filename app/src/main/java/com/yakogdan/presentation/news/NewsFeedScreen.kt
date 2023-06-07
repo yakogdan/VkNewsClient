@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.ui
+package com.yakogdan.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,12 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.ui.screenstates.NewsFeedScreenState
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
-import com.yakogdan.vknewsclient.viewmodels.NewsFeedViewModel
 
 @Composable
-fun HomeScreen(
+fun NewsFeedScreen(
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {

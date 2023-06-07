@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.ui.screenstates
+package com.yakogdan.presentation.comment
 
 import com.yakogdan.vknewsclient.domain.model.FeedPost
 import com.yakogdan.vknewsclient.domain.model.PostComment
