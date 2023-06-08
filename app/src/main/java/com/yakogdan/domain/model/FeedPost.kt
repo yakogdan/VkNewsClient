@@ -14,13 +14,13 @@ data class FeedPost(
     val communityImageUrl: String,
     val contentText: String,
     val contentImageUrl: String?,
-    val statistics: List<StatisticItem>
+    val statistics: List<StatisticItem>,
+    val isFavourite: Boolean
 ) : Parcelable {
     companion object {
         val NavigationType: NavType<FeedPost> = object : NavType<FeedPost>(false) {
 
-            override fun get(bundle: Bundle, key: String): FeedPost? =
-                bundle.getParcelable(key)
+            override fun get(bundle: Bundle, key: String): FeedPost? = bundle.getParcelable(key)
 
             override fun parseValue(value: String): FeedPost =
                 Gson().fromJson(value, FeedPost::class.java)
