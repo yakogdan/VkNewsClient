@@ -3,8 +3,8 @@ package com.yakogdan.presentation.comment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.domain.model.PostComment
+import com.yakogdan.domain.model.FeedPost
+import com.yakogdan.domain.model.PostComment
 
 class CommentsViewModel(feedPost: FeedPost) : ViewModel() {
 

@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.yakogdan.vknewsclient.domain.model.FeedPost
+import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.vknewsclient.navigation.Screen
 import com.yakogdan.vknewsclient.navigation.Screen.Companion.KEY_FEED_POST
 

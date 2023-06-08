@@ -1,4 +1,4 @@
-package com.yakogdan.vknewsclient.domain.model
+package com.yakogdan.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

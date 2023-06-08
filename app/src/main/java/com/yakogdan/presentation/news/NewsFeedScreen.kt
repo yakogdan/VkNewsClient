@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.yakogdan.vknewsclient.domain.model.FeedPost
+import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable

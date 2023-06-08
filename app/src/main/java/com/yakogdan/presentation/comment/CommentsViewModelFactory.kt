@@ -2,7 +2,7 @@ package com.yakogdan.presentation.comment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.yakogdan.vknewsclient.domain.model.FeedPost
+import com.yakogdan.domain.model.FeedPost
 
 @Suppress("UNCHECKED_CAST")
 class CommentsViewModelFactory(private val feedPost: FeedPost) : ViewModelProvider.Factory {

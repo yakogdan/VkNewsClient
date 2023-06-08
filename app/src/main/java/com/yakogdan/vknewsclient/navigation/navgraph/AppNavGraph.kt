@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.yakogdan.vknewsclient.domain.model.FeedPost
+import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.vknewsclient.navigation.Screen
 
 @Composable

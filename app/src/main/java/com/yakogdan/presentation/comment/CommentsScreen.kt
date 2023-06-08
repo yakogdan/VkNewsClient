@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.domain.model.PostComment
+import com.yakogdan.domain.model.FeedPost
+import com.yakogdan.domain.model.PostComment
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable

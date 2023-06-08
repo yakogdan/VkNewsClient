@@ -1,6 +1,6 @@
 package com.yakogdan.presentation.news
 
-import com.yakogdan.vknewsclient.domain.model.FeedPost
+import com.yakogdan.domain.model.FeedPost
 
 sealed class NewsFeedScreenState {
 

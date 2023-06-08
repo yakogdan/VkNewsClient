@@ -1,7 +1,7 @@
 package com.yakogdan.presentation.comment
 
-import com.yakogdan.vknewsclient.domain.model.FeedPost
-import com.yakogdan.vknewsclient.domain.model.PostComment
+import com.yakogdan.domain.model.FeedPost
+import com.yakogdan.domain.model.PostComment
 
 sealed class CommentsScreenState {
 
