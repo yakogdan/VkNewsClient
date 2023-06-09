@@ -28,8 +28,7 @@ import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable
 fun NewsFeedScreen(
-    paddingValues: PaddingValues,
-    onCommentClickListener: (FeedPost) -> Unit
+    paddingValues: PaddingValues, onCommentClickListener: (FeedPost) -> Unit
 ) {
 
     val viewModel: NewsFeedViewModel = viewModel()
@@ -96,18 +95,12 @@ private fun FeedPosts(
                         )
                     }
                 }) {
-                PostCard(feedPost = feedPost, onLikeClickListener = { statisticItem ->
-                    viewModel.updateCount(
-                        feedPost = feedPost, item = statisticItem
-                    )
+                PostCard(feedPost = feedPost, onLikeClickListener = { _ ->
+                    viewModel.changeLikeStatus(feedPost = feedPost)
                 }, onShareClickListener = { statisticItem ->
-                    viewModel.updateCount(
-                        feedPost = feedPost, item = statisticItem
-                    )
+                    viewModel.updateCount(feedPost = feedPost, item = statisticItem)
                 }, onViewsClickListener = { statisticItem ->
-                    viewModel.updateCount(
-                        feedPost = feedPost, item = statisticItem
-                    )
+                    viewModel.updateCount(feedPost = feedPost, item = statisticItem)
                 }, onCommentClickListener = {
                     onCommentClickListener(feedPost)
                 })
