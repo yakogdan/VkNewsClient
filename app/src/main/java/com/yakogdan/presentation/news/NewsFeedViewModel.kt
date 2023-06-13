@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.yakogdan.data.repository.NewsFeedRepository
 import com.yakogdan.domain.model.FeedPost
-import com.yakogdan.domain.model.StatisticItem
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,6 +19,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val repository = NewsFeedRepository(application)
 
     init {
+        _screenState.value = NewsFeedScreenState.Loading
         loadRecommendation()
     }
 
@@ -45,42 +45,10 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updateCount(feedPost: FeedPost, item: StatisticItem) {
-        val currentState = screenState.value
-        if (currentState !is NewsFeedScreenState.Posts) return
-
-        val oldPosts = currentState.posts.toMutableList()
-
-        val oldStatistics = feedPost.statistics
-
-        val newStatistics = oldStatistics.toMutableList().apply {
-            replaceAll { oldItem ->
-                if (oldItem.type == item.type) {
-                    oldItem.copy(count = oldItem.count + 1)
-                } else {
-                    oldItem
-                }
-            }
-        }
-        val newFeedPost = feedPost.copy(statistics = newStatistics)
-        val newPosts = oldPosts.apply {
-            replaceAll {
-                if (it.id == newFeedPost.id) {
-                    newFeedPost
-                } else {
-                    it
-                }
-            }
-        }
-        _screenState.value = NewsFeedScreenState.Posts(posts = newPosts)
-    }
-
     fun removeItem(feedPost: FeedPost) {
-        val currentState = screenState.value
-        if (currentState !is NewsFeedScreenState.Posts) return
-
-        val oldPosts = currentState.posts.toMutableList()
-        oldPosts.remove(feedPost)
-        _screenState.value = NewsFeedScreenState.Posts(posts = oldPosts)
+        viewModelScope.launch {
+            repository.deletePost(feedPost)
+        }
+        _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
     }
 }

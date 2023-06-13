@@ -58,7 +58,16 @@ fun NewsFeedScreen(
                     )
                 }
 
-                is NewsFeedScreenState.Initial -> {}
+                NewsFeedScreenState.Initial -> {}
+
+                NewsFeedScreenState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = DarkBlue)
+                    }
+                }
             }
         }
     }
@@ -102,15 +111,14 @@ private fun FeedPosts(
                         )
                     }
                 }) {
-                PostCard(feedPost = feedPost, onLikeClickListener = { _ ->
-                    viewModel.changeLikeStatus(feedPost = feedPost)
-                }, onShareClickListener = { statisticItem ->
-                    viewModel.updateCount(feedPost = feedPost, item = statisticItem)
-                }, onViewsClickListener = { statisticItem ->
-                    viewModel.updateCount(feedPost = feedPost, item = statisticItem)
-                }, onCommentClickListener = {
-                    onCommentClickListener(feedPost)
-                })
+                PostCard(
+                    feedPost = feedPost,
+                    onLikeClickListener = {
+                        viewModel.changeLikeStatus(feedPost = feedPost)
+                    },
+                    onCommentClickListener = {
+                        onCommentClickListener(feedPost)
+                    })
             }
         }
         item {
