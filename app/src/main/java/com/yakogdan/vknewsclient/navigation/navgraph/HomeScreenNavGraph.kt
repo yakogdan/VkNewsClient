@@ -2,7 +2,6 @@ package com.yakogdan.vknewsclient.navigation.navgraph
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
@@ -25,11 +24,11 @@ fun NavGraphBuilder.homeScreenNavGraph(
             route = Screen.Comments.route,
             arguments = listOf(
                 navArgument(KEY_FEED_POST) {
-                    type = NavType.StringType
+                    type = FeedPost.NavigationType
                 }
             )
         ) {
-            val feedPost = it.arguments?.getParcelable<FeedPost>(KEY_FEED_POST)
+            @Suppress("DEPRECATION") val feedPost = it.arguments?.getParcelable<FeedPost>(KEY_FEED_POST)
                 ?: throw RuntimeException("Args is null")
             commentsScreenContent(feedPost)
         }

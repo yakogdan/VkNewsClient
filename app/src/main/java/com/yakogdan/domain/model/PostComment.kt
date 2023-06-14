@@ -1,11 +1,9 @@
 package com.yakogdan.domain.model
 
-import com.yakogdan.vknewsclient.R
-
 data class PostComment(
-    val id: Int,
-    val authorName: String = "Autor",
-    val authorAvatarId: Int = R.drawable.comment_author_avatar,
-    val commentText: String = "Long comment text",
-    val publicationDate: String = "14:00"
+    val id: Long,
+    val authorName: String,
+    val authorAvatarUrl: String,
+    val commentText: String,
+    val publicationDate: String
 )

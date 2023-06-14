@@ -1,6 +1,7 @@
 package com.yakogdan.presentation.comment
 
-import androidx.compose.foundation.Image
+import android.app.Application
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -23,29 +25,35 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.domain.model.PostComment
-import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
+import com.yakogdan.vknewsclient.R
 
 @Composable
 fun CommentsScreen(
     onBackPressed: () -> Unit, feedPost: FeedPost
 ) {
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost = feedPost)
+        factory = CommentsViewModelFactory(
+            feedPost = feedPost,
+            application = LocalContext.current.applicationContext as Application
+        )
     )
+
     val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
 
     if (currentState is CommentsScreenState.Comments) {
         Scaffold(topBar = {
             TopAppBar(title = {
-                Text(text = "Comments for FeedPost id: ${currentState.feedPost.id}")
+                Text(text = stringResource(R.string.comments_title))
             }, navigationIcon = {
                 IconButton(onClick = { onBackPressed() }) {
                     Icon(
@@ -57,7 +65,7 @@ fun CommentsScreen(
             LazyColumn(
                 modifier = Modifier.padding(paddingValues), contentPadding = PaddingValues(
                     top = 16.dp, start = 8.dp, end = 8.dp, bottom = 72.dp
-                )
+                ), verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = currentState.comments, key = { it.id }) { comment ->
                     CommentItem(comment = comment)
@@ -76,17 +84,17 @@ private fun CommentItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
-        Image(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = comment.authorAvatarId),
+        AsyncImage(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape),
+            model = comment.authorAvatarUrl,
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "${comment.authorName} CommentId: ${comment.id}",
-                color = MaterialTheme.colors.onPrimary,
-                fontSize = 12.sp
+                text = comment.authorName, color = MaterialTheme.colors.onPrimary, fontSize = 12.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -99,13 +107,5 @@ private fun CommentItem(
                 fontSize = 12.sp
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewComment() {
-    VkNewsClientTheme {
-        CommentItem(comment = PostComment(id = 0))
     }
 }

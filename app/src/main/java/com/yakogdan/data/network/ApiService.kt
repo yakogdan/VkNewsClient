@@ -1,5 +1,6 @@
 package com.yakogdan.data.network
 
+import com.yakogdan.data.model.CommentsResponseDto
 import com.yakogdan.data.model.LikesCountResponseDto
 import com.yakogdan.data.model.NewsFeedResponseDto
 import retrofit2.http.GET
@@ -14,8 +15,7 @@ interface ApiService {
 
     @GET("newsfeed.getRecommended?v=5.131")
     suspend fun loadRecommendation(
-        @Query("access_token") token: String,
-        @Query("start_from") startFrom: String
+        @Query("access_token") token: String, @Query("start_from") startFrom: String
     ): NewsFeedResponseDto
 
     @GET("likes.add?v=5.131&type=post")
@@ -38,4 +38,11 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
     )
+
+    @GET("wall.getComments?v=5.131&extended=1&fields=photo_100")
+    suspend fun getComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long
+    ): CommentsResponseDto
 }

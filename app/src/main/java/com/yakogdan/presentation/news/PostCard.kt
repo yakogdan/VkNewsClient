@@ -111,24 +111,22 @@ private fun Statistics(
     onCommentClickListener: (StatisticItem) -> Unit,
     isFavourite: Boolean
 ) {
-    Row {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Row(
-            modifier = Modifier.weight(1f)
         ) {
             val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
             IconWithText(
                 iconResId = R.drawable.ic_views_count,
-                text = formatStatisticCount(viewsItem.count),
+                text = formatStatisticCount(viewsItem.count)
             )
         }
         Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
             IconWithText(
                 iconResId = R.drawable.ic_share,
-                text = formatStatisticCount(sharesItem.count),
+                text = formatStatisticCount(sharesItem.count)
             )
 
             val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
@@ -154,7 +152,9 @@ private fun Statistics(
 }
 
 private fun formatStatisticCount(count: Int): String {
-    return if (count > 100_000) {
+    return if (count > 1_000_000) {
+        String.format("%.1fM", (count / 1_000_000f))
+    } else if (count > 100_000) {
         String.format("%sK", (count / 1000))
     } else if (count > 1000) {
         String.format("%.1fK", (count / 1000f))
