@@ -1,4 +1,4 @@
-package com.yakogdan.presentation.main.state
+package com.yakogdan.domain.state
 
 sealed class AuthState {
     object Authorized : AuthState()

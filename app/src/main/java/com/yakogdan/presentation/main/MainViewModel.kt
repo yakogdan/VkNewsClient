@@ -1,38 +1,25 @@
 package com.yakogdan.presentation.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
-import com.vk.api.sdk.auth.VKAuthenticationResult
-import com.yakogdan.presentation.main.state.AuthState
+import androidx.lifecycle.viewModelScope
+import com.yakogdan.data.repository.NewsFeedRepositoryImpl
+import com.yakogdan.domain.usecase.CheckAuthStateDataUseCase
+import com.yakogdan.domain.usecase.GetAuthStateFlowUseCase
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _authState = MutableLiveData<AuthState>(AuthState.Initial)
-    val authState: LiveData<AuthState> = _authState
+    private val repository = NewsFeedRepositoryImpl(application)
 
-    init {
-        val storage = VKPreferencesKeyValueStorage(application)
-        val token = VKAccessToken.restore(storage)
-        val loggedIn = token != null && token.isValid
-        Log.d("MainViewModel", "Token: ${token?.accessToken}")
-        _authState.value = if (loggedIn) {
-            AuthState.Authorized
-        } else {
-            AuthState.NotAuthorized
-        }
-    }
+    private val getAuthStateFlowUseCase = GetAuthStateFlowUseCase(repository)
+    private val checkAuthStateDataUseCase = CheckAuthStateDataUseCase(repository)
 
-    fun performAuthResult(result: VKAuthenticationResult) {
-        if (result is VKAuthenticationResult.Success) {
-            _authState.value = AuthState.Authorized
-        } else {
+    val authState = getAuthStateFlowUseCase()
 
-            _authState.value = AuthState.NotAuthorized
+    fun performAuthResult() {
+        viewModelScope.launch {
+            checkAuthStateDataUseCase
         }
     }
 }
