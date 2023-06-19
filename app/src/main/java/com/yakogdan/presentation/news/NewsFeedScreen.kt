@@ -20,7 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +44,7 @@ fun NewsFeedScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
+            val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
 
             when (val currentState = screenState.value) {
 
