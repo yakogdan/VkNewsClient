@@ -1,8 +1,7 @@
 package com.yakogdan.di
 
 import android.content.Context
-import com.yakogdan.domain.model.FeedPost
-import com.yakogdan.presentation.main.MainActivity
+import com.yakogdan.presentation.vmfactory.ViewModelFactory
 import dagger.BindsInstance
 import dagger.Component
 
@@ -15,7 +14,7 @@ import dagger.Component
 )
 interface ApplicationComponent {
 
-    fun inject(mainActivity: MainActivity)
+    fun getViewModelFactory(): ViewModelFactory
 
     fun getCommentsScreenComponentFactory(): CommentsScreenComponent.Factory
 

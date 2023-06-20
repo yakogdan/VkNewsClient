@@ -14,12 +14,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,49 +28,55 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yakogdan.domain.model.FeedPost
-import com.yakogdan.presentation.vmfactory.ViewModelFactory
+import com.yakogdan.presentation.app.getApplicationComponent
 import com.yakogdan.vknewsclient.ui.theme.DarkBlue
-import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable
 fun NewsFeedScreen(
-    viewModelFactory: ViewModelFactory,
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
 
-    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
+    val component = getApplicationComponent()
+    val viewModel: NewsFeedViewModel = viewModel(factory = component.getViewModelFactory())
+    val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
 
-    VkNewsClientTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-        ) {
-            val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
+    NewsFeedScreenContent(
+        screenState = screenState,
+        paddingValues = paddingValues,
+        viewModel = viewModel,
+        onCommentClickListener = onCommentClickListener
+    )
 
-            when (val currentState = screenState.value) {
+}
 
-                is NewsFeedScreenState.Posts -> {
-                    FeedPosts(
-                        posts = currentState.posts,
-                        viewModel = viewModel,
-                        paddingValues = paddingValues,
-                        onCommentClickListener = onCommentClickListener,
-                        nextDataIsLoading = currentState.nextDataIsLoading
-                    )
-                }
+@Composable
+private fun NewsFeedScreenContent(
+    screenState: State<NewsFeedScreenState>,
+    paddingValues: PaddingValues,
+    viewModel: NewsFeedViewModel,
+    onCommentClickListener: (FeedPost) -> Unit
+) {
+    when (val currentState = screenState.value) {
 
-                NewsFeedScreenState.Initial -> {}
+        is NewsFeedScreenState.Posts -> {
+            FeedPosts(
+                posts = currentState.posts,
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                onCommentClickListener = onCommentClickListener,
+                nextDataIsLoading = currentState.nextDataIsLoading
+            )
+        }
 
-                NewsFeedScreenState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = DarkBlue)
-                    }
-                }
+        NewsFeedScreenState.Initial -> {}
+
+        NewsFeedScreenState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = DarkBlue)
             }
         }
     }
