@@ -28,15 +28,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yakogdan.domain.model.FeedPost
+import com.yakogdan.presentation.vmfactory.ViewModelFactory
 import com.yakogdan.vknewsclient.ui.theme.DarkBlue
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 
 @Composable
 fun NewsFeedScreen(
-    paddingValues: PaddingValues, onCommentClickListener: (FeedPost) -> Unit
+    viewModelFactory: ViewModelFactory,
+    paddingValues: PaddingValues,
+    onCommentClickListener: (FeedPost) -> Unit
 ) {
 
-    val viewModel: NewsFeedViewModel = viewModel()
+    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
 
     VkNewsClientTheme {
         Box(

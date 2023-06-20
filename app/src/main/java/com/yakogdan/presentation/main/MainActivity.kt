@@ -10,13 +10,25 @@ import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
 import com.yakogdan.vknewsclient.ui.theme.VkNewsClientTheme
 import com.yakogdan.domain.state.AuthState
+import com.yakogdan.presentation.app.NewsFeedApplication
+import com.yakogdan.presentation.vmfactory.ViewModelFactory
+import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private  val component by lazy {
+        (application as NewsFeedApplication).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContent {
             VkNewsClientTheme {
-                val viewModel: MainViewModel = viewModel()
+                val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
                 val authState = viewModel.authState.collectAsState(AuthState.Initial)
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract()
@@ -26,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
                 when (authState.value) {
                     is AuthState.Authorized -> {
-                        MainScreen()
+                        MainScreen(viewModelFactory)
                     }
 
                     is AuthState.NotAuthorized -> {

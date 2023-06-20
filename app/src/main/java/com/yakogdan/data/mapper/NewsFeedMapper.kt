@@ -9,9 +9,10 @@ import com.yakogdan.domain.model.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class NewsFeedMapper @Inject constructor() {
     fun mapResponseToPosts(responseDto: NewsFeedResponseDto): List<FeedPost> {
         val result = mutableListOf<FeedPost>()
         val posts = responseDto.newsFeedContent.posts
@@ -45,7 +46,7 @@ class NewsFeedMapper {
         val profiles = response.content.profiles
         for (comment in comments) {
             if (comment.text.isBlank()) continue
-            val author = profiles.firstOrNull {it.id == comment.authorId} ?: continue
+            val author = profiles.firstOrNull { it.id == comment.authorId } ?: continue
             val postComment = PostComment(
                 id = comment.id,
                 authorName = "${author.firstName} ${author.LastName}",

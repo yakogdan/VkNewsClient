@@ -1,10 +1,9 @@
 package com.yakogdan.data.repository
 
-import android.app.Application
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import com.yakogdan.data.mapper.NewsFeedMapper
-import com.yakogdan.data.network.ApiFactory
+import com.yakogdan.data.network.ApiService
 import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.domain.model.PostComment
 import com.yakogdan.domain.model.StatisticItem
@@ -21,10 +20,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
+class NewsFeedRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val mapper: NewsFeedMapper,
+    private val storage: VKPreferencesKeyValueStorage
+) : NewsFeedRepository {
 
-    private val storage = VKPreferencesKeyValueStorage(application)
+
     private val token
         get() = VKAccessToken.restore(storage)
 
@@ -52,15 +56,11 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
             _feedPosts.addAll(posts)
             emit(feedPosts)
         }
+    }.retry() {
+        delay(RETRY_TIMEOUT_MILLIS)
+        true
     }
-        .retry() {
-            delay(RETRY_TIMEOUT_MILLIS)
-            true
-        }
 
-    private val apiService = ApiFactory.apiService
-
-    private val mapper = NewsFeedMapper()
 
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost> get() = _feedPosts.toList()
@@ -78,17 +78,12 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
             emit(authState)
         }
     }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Lazily,
-        initialValue = AuthState.Initial
+        scope = coroutineScope, started = SharingStarted.Lazily, initialValue = AuthState.Initial
     )
 
-    private val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
-        .mergeWith(refreshedListFlow)
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.Lazily,
-            initialValue = feedPosts
+    private val recommendations: StateFlow<List<FeedPost>> =
+        loadedListFlow.mergeWith(refreshedListFlow).stateIn(
+            scope = coroutineScope, started = SharingStarted.Lazily, initialValue = feedPosts
         )
 
     override fun getAuthStateFlow(): StateFlow<AuthState> = authStateFlow
@@ -109,9 +104,7 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
 
     override suspend fun deletePost(feedPost: FeedPost) {
         apiService.ignorePost(
-            token = getAccessToken(),
-            ownerId = feedPost.communityId,
-            postId = feedPost.id
+            token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
         )
         _feedPosts.remove(feedPost)
         refreshedListFlow.emit(feedPosts)
@@ -119,32 +112,24 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
 
     override fun getComments(feedPost: FeedPost): StateFlow<List<PostComment>> = flow {
         val comments = apiService.getComments(
-            token = getAccessToken(),
-            ownerId = feedPost.communityId,
-            postId = feedPost.id
+            token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
         )
         emit(mapper.mapResponseToComments(comments))
     }.retry {
         delay(RETRY_TIMEOUT_MILLIS)
         true
     }.stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Lazily,
-        initialValue = listOf()
+        scope = coroutineScope, started = SharingStarted.Lazily, initialValue = listOf()
     )
 
     override suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
-                token = getAccessToken(),
-                ownerId = feedPost.communityId,
-                postId = feedPost.id
+                token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
             )
         } else {
             apiService.addLike(
-                token = getAccessToken(),
-                ownerId = feedPost.communityId,
-                postId = feedPost.id
+                token = getAccessToken(), ownerId = feedPost.communityId, postId = feedPost.id
             )
         }
         val newLikesCount = response.likes.count

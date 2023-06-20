@@ -1,6 +1,5 @@
 package com.yakogdan.presentation.comment
 
-import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,18 +33,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.yakogdan.domain.model.FeedPost
 import com.yakogdan.domain.model.PostComment
+import com.yakogdan.presentation.app.NewsFeedApplication
+import com.yakogdan.presentation.vmfactory.ViewModelFactory
 import com.yakogdan.vknewsclient.R
 
 @Composable
 fun CommentsScreen(
-    onBackPressed: () -> Unit, feedPost: FeedPost
+    onBackPressed: () -> Unit,
+    feedPost: FeedPost
 ) {
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            feedPost = feedPost,
-            application = LocalContext.current.applicationContext as Application
-        )
-    )
+    val component = (LocalContext.current.applicationContext as NewsFeedApplication)
+        .component
+        .getCommentsScreenComponentFactory()
+        .create(feedPost)
+
+    val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
 
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
